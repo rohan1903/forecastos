@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.env
+forecastos.db
+
+# Node
+node_modules/
+.next/
+out/
+npm-debug.log*
+
+# Editor / OS
+.DS_Store
+Thumbs.db
