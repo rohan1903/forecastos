@@ -39,6 +39,20 @@ class LocationResponse(BaseModel):
     longitude: float
 
 
+class LocationSuggestion(BaseModel):
+    name: str
+    country: str | None = None
+    state: str | None = None
+    latitude: float
+    longitude: float
+    display_label: str
+
+
+class LocationSuggestionsResponse(BaseModel):
+    query: str
+    suggestions: list[LocationSuggestion]
+
+
 class CurrentWeatherResponse(BaseModel):
     temperature_c: float
     feels_like_c: float

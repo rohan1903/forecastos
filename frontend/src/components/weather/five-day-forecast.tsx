@@ -52,7 +52,7 @@ export function FiveDayForecast({ forecast }: FiveDayForecastProps) {
             <p className="truncate text-sm font-semibold capitalize text-slate-300">
               {day.description}
             </p>
-            <p className="text-sm font-bold text-amber-100">
+            <p className="font-mono text-sm font-bold tabular-nums text-amber-100">
               {day.high}° / <span className="text-slate-500">{day.low}°</span>
             </p>
           </article>

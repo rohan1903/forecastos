@@ -129,6 +129,13 @@ class OpenWeatherClient:
             {"lat": latitude, "lon": longitude, "units": "metric"},
         )
 
+    async def current_weather_by_query(self, query: str) -> dict[str, Any]:
+        """Resolve city-name searches via the classic weather endpoint (broader API key support)."""
+        return await self._get(
+            f"{self.weather_base_url}/weather",
+            {"q": query.strip(), "units": "metric"},
+        )
+
     async def five_day_forecast(
         self, latitude: float, longitude: float
     ) -> dict[str, Any]:

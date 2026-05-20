@@ -12,8 +12,10 @@ class Settings(BaseSettings):
     app_name: str = "ForecastOS API"
     api_v1_prefix: str = "/api/v1"
     openweather_api_key: str = ""
+    database_url: str = "sqlite:///./forecastos.db"
     backend_cors_origins: str = "http://localhost:3000"
     request_timeout_seconds: float = 12.0
+    nominatim_user_agent: str = "ForecastOS/1.0 (weather-intelligence-app)"
 
     model_config = SettingsConfigDict(
         env_file=str(_ENV_FILE),
