@@ -68,7 +68,7 @@ ForecastOS is a portfolio full-stack application built for the **PM Accelerator 
 forecastos/
 ├── backend/     FastAPI services, models, SQLite
 ├── frontend/    Next.js App Router dashboard
-└── docs/        Deployment guide and assessment reference
+└── docs/        Deployment guide
 ```
 
 ---
