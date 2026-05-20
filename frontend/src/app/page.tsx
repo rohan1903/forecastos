@@ -25,12 +25,20 @@ export default function Home() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const lastSearchPayload = useRef<WeatherSearchRequest | null>(null);
-  const { isLocating, error: geoError, getCurrentPosition } = useGeolocation();
+  const searchGeneration = useRef(0);
+  const {
+    isLocating,
+    error: geoError,
+    clearError: clearGeoError,
+    getCurrentPosition,
+  } = useGeolocation();
 
   async function runSearch(
     payload: WeatherSearchRequest,
     options?: { clearSaveMessage?: boolean },
-  ) {
+  ): Promise<boolean> {
+    const generation = ++searchGeneration.current;
+
     setIsLoading(true);
     setError(null);
     if (options?.clearSaveMessage !== false) {
@@ -39,25 +47,41 @@ export default function Home() {
 
     try {
       const result = await searchWeather(payload);
+      if (generation !== searchGeneration.current) {
+        return false;
+      }
+
       setWeather(result);
       lastSearchPayload.current = { ...payload, save: false };
+      clearGeoError();
+      return true;
     } catch (err) {
+      if (generation !== searchGeneration.current) {
+        return false;
+      }
+
       if (err instanceof ApiClientError) {
         setError(err.message);
       } else {
         setError("Unexpected error while searching weather data.");
       }
+      return false;
     } finally {
-      setIsLoading(false);
+      if (generation === searchGeneration.current) {
+        setIsLoading(false);
+      }
     }
   }
 
   async function handleSearch(query: string) {
+    clearGeoError();
     await runSearch({ input_type: "query", query, save: false });
   }
 
   async function handleCurrentLocation() {
     setError(null);
+    clearGeoError();
+
     try {
       const position = await getCurrentPosition();
       await runSearch({
@@ -66,10 +90,8 @@ export default function Home() {
         longitude: position.longitude,
         save: false,
       });
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      }
+    } catch {
+      // Geolocation errors are exposed via geoError from useGeolocation.
     }
   }
 
@@ -83,26 +105,21 @@ export default function Home() {
     setIsSaving(true);
     setError(null);
 
-    try {
-      await runSearch(
-        {
-          ...lastSearchPayload.current,
-          save: true,
-          label: label || undefined,
-          notes: notes || undefined,
-        },
-        { clearSaveMessage: false },
-      );
+    const saved = await runSearch(
+      {
+        ...lastSearchPayload.current,
+        save: true,
+        label: label || undefined,
+        notes: notes || undefined,
+      },
+      { clearSaveMessage: false },
+    );
+
+    setIsSaving(false);
+
+    if (saved) {
       setSaveMessage("Search saved");
       setSaveDialogOpen(false);
-    } catch (err) {
-      if (err instanceof ApiClientError) {
-        setError(err.message);
-      } else {
-        setError("Could not save this search.");
-      }
-    } finally {
-      setIsSaving(false);
     }
   }
 

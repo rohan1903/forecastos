@@ -10,12 +10,17 @@ type GeolocationResult = {
 type UseGeolocationState = {
   isLocating: boolean;
   error: string | null;
+  clearError: () => void;
   getCurrentPosition: () => Promise<GeolocationResult>;
 };
 
 export function useGeolocation(): UseGeolocationState {
   const [isLocating, setIsLocating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
 
   const getCurrentPosition = useCallback(() => {
     return new Promise<GeolocationResult>((resolve, reject) => {
@@ -56,5 +61,5 @@ export function useGeolocation(): UseGeolocationState {
     });
   }, []);
 
-  return { isLocating, error, getCurrentPosition };
+  return { isLocating, error, clearError, getCurrentPosition };
 }

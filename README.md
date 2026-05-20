@@ -1,19 +1,23 @@
+<div align="center">
+
 # ForecastOS
 
-**Weather intelligence platform** — real-time conditions, forecasts, air quality, and planning insights in one full-stack dashboard.
+A full-stack weather intelligence dashboard — real-time conditions, forecasts, air quality, and planning insights for travel and daily decisions.
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-forecastos--seven.vercel.app-0ea5e9?style=for-the-badge)](https://forecastos-seven.vercel.app)
-[![API Docs](https://img.shields.io/badge/API_Swagger-onrender.com-46E3B7?style=for-the-badge)](https://forecastos-api.onrender.com/docs)
-[![Repository](https://img.shields.io/badge/GitHub-rohan1903%2Fforecastos-181717?style=for-the-badge&logo=github)](https://github.com/rohan1903/forecastos)
+[Live Demo](https://forecastos-seven.vercel.app) • [Getting Started](#getting-started) • [Deployment](#deployment) • [API Docs](https://forecastos-api.onrender.com/docs)
 
-[![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=next.js&logoColor=white)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38B2AC?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![SQLite](https://img.shields.io/badge/SQLite-SQLAlchemy-003B57?logo=sqlite&logoColor=white)](https://www.sqlite.org/)
-[![OpenWeather](https://img.shields.io/badge/OpenWeatherMap-API-EB6F2E)](https://openweathermap.org/)
+<br />
+
+<img alt="Python 3.11" src="https://img.shields.io/badge/Python-3.11-3776AB?style=flat-square&logo=python&logoColor=white" />
+<img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white" />
+<img alt="TypeScript 5" src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white" />
+<img alt="Next.js 16" src="https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=next.js&logoColor=white" />
+<img alt="React 19" src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black" />
+<img alt="Tailwind CSS 4" src="https://img.shields.io/badge/Tailwind-4-38B2AC?style=flat-square&logo=tailwindcss&logoColor=white" />
+<img alt="SQLite" src="https://img.shields.io/badge/SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white" />
+<img alt="OpenWeatherMap" src="https://img.shields.io/badge/OpenWeather-API-EB6F2E?style=flat-square&logo=openweathermap&logoColor=white" />
+
+</div>
 
 ---
 
