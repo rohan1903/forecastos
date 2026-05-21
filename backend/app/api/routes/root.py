@@ -1,11 +1,5 @@
-from fastapi import APIRouter
-
-router = APIRouter(tags=["meta"])
-
-
-@router.get("")
-async def api_root() -> dict[str, object]:
-    """API index — documents the v1 base path and common routes."""
+def build_api_root_response() -> dict[str, object]:
+    """Payload for GET /api/v1 — API index and common route paths."""
     return {
         "service": "ForecastOS API",
         "version": "0.1.0",

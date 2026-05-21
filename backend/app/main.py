@@ -3,7 +3,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import export, health, records, root, weather
+from app.api.routes import export, health, records, weather
+from app.api.routes.root import build_api_root_response
 from app.core.config import get_settings
 from app.core.database import init_db
 from app.core.errors import register_error_handlers
@@ -33,7 +34,11 @@ def create_app() -> FastAPI:
     )
 
     register_error_handlers(app)
-    app.include_router(root.router, prefix=settings.api_v1_prefix)
+
+    @app.get(settings.api_v1_prefix, tags=["meta"], summary="API index")
+    async def api_v1_root() -> dict[str, object]:
+        return build_api_root_response()
+
     app.include_router(health.router, prefix=settings.api_v1_prefix)
     app.include_router(weather.router, prefix=settings.api_v1_prefix)
     app.include_router(records.router, prefix=settings.api_v1_prefix)
