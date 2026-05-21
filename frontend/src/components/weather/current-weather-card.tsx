@@ -6,8 +6,28 @@ type CurrentWeatherCardProps = {
   current: CurrentWeatherResponse;
 };
 
+function currentIconAnimation(condition: string) {
+  const normalized = condition.toLowerCase();
+
+  if (normalized.includes("clear") || normalized.includes("sun")) {
+    return "animate-weather-glow";
+  }
+
+  if (
+    normalized.includes("rain") ||
+    normalized.includes("drizzle") ||
+    normalized.includes("thunder") ||
+    normalized.includes("storm")
+  ) {
+    return "animate-weather-bob";
+  }
+
+  return "animate-weather-float";
+}
+
 export function CurrentWeatherCard({ location, current }: CurrentWeatherCardProps) {
   const region = [location.state, location.country].filter(Boolean).join(", ");
+  const iconAnimation = currentIconAnimation(current.condition);
 
   return (
     <section className="relative overflow-hidden rounded-2xl border border-amber-200/15 bg-[#111b27] p-8 shadow-xl shadow-black/20">
@@ -30,8 +50,10 @@ export function CurrentWeatherCard({ location, current }: CurrentWeatherCardProp
         </div>
 
         <div className="flex justify-center md:justify-end">
-          <div className="flex h-44 w-44 items-center justify-center rounded-full bg-amber-300/5 ring-1 ring-amber-200/10">
-            <WeatherIcon condition={current.condition} className="h-36 w-36" />
+          <div className="flex h-44 w-44 items-center justify-center rounded-full bg-amber-300/5 ring-1 ring-amber-200/10 animate-weather-ring-pulse">
+            <div className={iconAnimation}>
+              <WeatherIcon condition={current.condition} className="h-36 w-36" />
+            </div>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { AppShell } from "@/components/layout/app-shell";
 import { ExportActions } from "@/components/records/export-actions";
@@ -21,11 +21,19 @@ export default function RecordsPage() {
   const [total, setTotal] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [editingRecord, setEditingRecord] = useState<WeatherRecord | null>(null);
 
-  const loadRecords = useCallback(async () => {
-    setIsLoading(true);
+  async function fetchRecords(options?: { refresh?: boolean }) {
+    const refresh = options?.refresh ?? false;
+
+    if (refresh) {
+      setIsRefreshing(true);
+    } else {
+      setIsLoading(true);
+    }
     setError(null);
+
     try {
       const response = await listRecords();
       setRecords(response.items);
@@ -38,12 +46,41 @@ export default function RecordsPage() {
       }
     } finally {
       setIsLoading(false);
+      setIsRefreshing(false);
     }
-  }, []);
+  }
 
   useEffect(() => {
-    void loadRecords();
-  }, [loadRecords]);
+    let cancelled = false;
+
+    void (async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await listRecords();
+        if (!cancelled) {
+          setRecords(response.items);
+          setTotal(response.total);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          if (err instanceof ApiClientError) {
+            setError(err.message);
+          } else {
+            setError("Could not load saved records.");
+          }
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function handleDelete(recordId: number) {
     if (!window.confirm("Delete this saved record?")) {
@@ -54,7 +91,7 @@ export default function RecordsPage() {
       if (editingRecord?.id === recordId) {
         setEditingRecord(null);
       }
-      await loadRecords();
+      await fetchRecords({ refresh: true });
     } catch (err) {
       setError(
         err instanceof ApiClientError
@@ -71,7 +108,7 @@ export default function RecordsPage() {
     try {
       await updateRecord(recordId, payload);
       setEditingRecord(null);
-      await loadRecords();
+      await fetchRecords({ refresh: true });
     } catch (err) {
       setError(
         err instanceof ApiClientError
@@ -100,6 +137,9 @@ export default function RecordsPage() {
 
         {error ? <ErrorState message={error} /> : null}
         {isLoading ? <LoadingCard /> : null}
+        {isRefreshing ? (
+          <p className="text-sm text-slate-500">Refreshing records…</p>
+        ) : null}
 
         {!isLoading && records.length === 0 ? (
           <section className="rounded-2xl border border-dashed border-white/15 bg-[#111b27]/60 p-8 text-center">

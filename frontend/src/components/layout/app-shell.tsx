@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { Activity, CloudSun } from "lucide-react";
 
+import { PmAcceleratorFooter } from "@/components/layout/pm-accelerator-footer";
+
 type AppShellProps = { children: ReactNode };
 
 const navItems = [
@@ -42,6 +44,7 @@ export function AppShell({ children }: AppShellProps) {
           </div>
         </header>
         {children}
+        <PmAcceleratorFooter />
       </div>
     </main>
   );

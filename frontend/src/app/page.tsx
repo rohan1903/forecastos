@@ -10,6 +10,7 @@ import { SaveSearchDialog } from "@/components/weather/save-search-dialog";
 import { CurrentWeatherCard } from "@/components/weather/current-weather-card";
 import { FiveDayForecast } from "@/components/weather/five-day-forecast";
 import { ForecastGrid } from "@/components/weather/forecast-grid";
+import { ForecastTrendChart } from "@/components/weather/forecast-trend-chart";
 import { RiskScoreCard } from "@/components/weather/risk-score-card";
 import { SearchPanel } from "@/components/weather/search-panel";
 import { WeatherConditionsCard } from "@/components/weather/weather-conditions-card";
@@ -175,18 +176,24 @@ export default function Home() {
               </button>
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_22rem]">
-              <div className="space-y-4">
-                <CurrentWeatherCard
-                  location={weather.location}
-                  current={weather.current}
-                />
-                <ForecastGrid forecast={weather.forecast} />
+            <div className="space-y-4">
+              <CurrentWeatherCard
+                location={weather.location}
+                current={weather.current}
+              />
+
+              <ForecastGrid forecast={weather.forecast} />
+
+              <div className="grid items-stretch gap-4 lg:grid-cols-[minmax(0,1fr)_22rem]">
+                <div data-layout="trend-chart" className="min-w-0">
+                  <ForecastTrendChart forecast={weather.forecast} />
+                </div>
+                <div data-layout="five-day" className="min-w-0">
+                  <FiveDayForecast forecast={weather.forecast} />
+                </div>
               </div>
 
-              <FiveDayForecast forecast={weather.forecast} />
-
-              <div className="lg:col-span-2 grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+              <div className="grid gap-4 lg:grid-cols-2">
                 <WeatherConditionsCard
                   current={weather.current}
                   airQuality={weather.air_quality}

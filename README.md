@@ -47,8 +47,9 @@ ForecastOS is a portfolio full-stack application built for the **PM Accelerator 
 | Area | Capabilities |
 |------|----------------|
 | **Search** | Cities, states/regions, autocomplete, browser geolocation |
-| **Weather** | Current conditions, 5-day forecast, air quality (OpenWeatherMap) |
+| **Weather** | Current conditions, 5-day forecast, hourly grid, trend charts (Recharts), air quality |
 | **Intelligence** | Risk score, recommendations, clothing hints, anomaly notes |
+| **Dashboard UX** | Animated current-weather icon, responsive layout, PM Accelerator footer |
 | **Persistence** | Save searches with label and notes (SQLite + SQLAlchemy) |
 | **Records** | List, edit metadata, delete — `/records` |
 | **Export** | JSON, CSV, and Markdown (bulk or per record) |
@@ -60,7 +61,7 @@ ForecastOS is a portfolio full-stack application built for the **PM Accelerator 
 
 | Layer | Stack |
 |-------|--------|
-| **Frontend** | Next.js 16 · React 19 · TypeScript 5 · Tailwind CSS 4 · Lucide · Zod |
+| **Frontend** | Next.js 16 · React 19 · TypeScript 5 · Tailwind CSS 4 · Recharts · Lucide · Zod |
 | **Backend** | FastAPI · Pydantic · SQLAlchemy · httpx · Uvicorn |
 | **Database** | SQLite (`backend/forecastos.db`, auto-created, gitignored) |
 | **External APIs** | OpenWeatherMap · OpenStreetMap Nominatim (states/regions) |
@@ -133,6 +134,8 @@ npm install
 npm run dev
 ```
 
+Uses Webpack by default for a stable local dev experience. For Turbopack: `npm run dev:turbopack`.
+
 Open [http://localhost:3000](http://localhost:3000).
 
 ```env
@@ -145,6 +148,16 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api/v1
 2. **Save** with a label → confirm success
 3. **Saved Records** → edit, export (JSON/CSV/Markdown), delete
 4. **Use current location** (allow browser permission)
+
+### Backend tests
+
+```powershell
+cd backend
+.\.venv\Scripts\Activate.ps1
+python -m pytest tests/ -v
+```
+
+Covers health, records CRUD, export formats, and intelligence scoring (no live OpenWeather calls).
 
 ---
 
@@ -219,6 +232,7 @@ Config in repo: `render.yaml`, `frontend/vercel.json`, `backend/Procfile`, `back
 - **Normalized + raw storage** — fast lists plus full provider payloads in JSON columns
 - **Rule-based intelligence** — risk and recommendations without a paid LLM
 - **Independent deploys** — frontend and backend scale and ship separately
+- **pytest coverage** — health, records CRUD, exports, and intelligence rules without live API calls
 
 ---
 
@@ -231,6 +245,7 @@ Config in repo: `render.yaml`, `frontend/vercel.json`, `backend/Procfile`, `back
 | Frontend hits `localhost` | Set `NEXT_PUBLIC_API_BASE_URL` on Vercel and **redeploy** |
 | Slow first API call | Render cold start — wait and retry |
 | Records disappeared | Ephemeral SQLite on free tier after redeploy |
+| `/records` flickers or Turbopack FATAL in dev | Stop dev server, delete `frontend/.next`, run `npm run dev` from `frontend/` (uses Webpack). Optional: `npm run dev:turbopack` only if Turbopack works on your machine |
 
 ---
 
@@ -249,8 +264,9 @@ Developed for the **PM Accelerator AI Engineer Intern** technical assessment —
 ## Roadmap
 
 - [x] Production deployment (Vercel + Render)
+- [x] Trend charts (Recharts) and expanded tests
+- [x] PM Accelerator section in-app
 - [ ] Demo video and README screenshots
-- [ ] Trend charts (Recharts) and expanded tests
 - [ ] PostgreSQL for durable production data
 - [ ] Optional — auth, LLM summaries, location comparison
 

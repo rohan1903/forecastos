@@ -36,7 +36,7 @@ export function FiveDayForecast({ forecast }: FiveDayForecastProps) {
   const dailyForecast = buildDailyForecast(forecast);
 
   return (
-    <section className="h-full rounded-2xl border border-cyan-200/10 bg-[#111b27] p-5 shadow-xl shadow-black/20">
+    <section className="flex h-full min-h-full flex-col rounded-2xl border border-cyan-200/10 bg-[#111b27] p-5 shadow-xl shadow-black/20">
       <h2 className="text-sm font-bold uppercase tracking-[0.14em] text-cyan-100/80">
         5-Day Forecast
       </h2>

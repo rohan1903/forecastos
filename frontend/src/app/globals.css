@@ -18,3 +18,66 @@ body {
   font-family: var(--font-dm-sans), system-ui, sans-serif;
   font-feature-settings: "tnum" 1;
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes weather-float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  @keyframes weather-glow {
+    0%,
+    100% {
+      transform: scale(1);
+      filter: drop-shadow(0 0 12px rgb(251 191 36 / 0.25));
+    }
+    50% {
+      transform: scale(1.04);
+      filter: drop-shadow(0 0 20px rgb(251 191 36 / 0.45));
+    }
+  }
+
+  @keyframes weather-bob {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    35% {
+      transform: translateY(-6px);
+    }
+    70% {
+      transform: translateY(-2px);
+    }
+  }
+
+  @keyframes weather-ring-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgb(251 191 36 / 0.08);
+    }
+    50% {
+      box-shadow: 0 0 28px 4px rgb(251 191 36 / 0.12);
+    }
+  }
+
+  .animate-weather-float {
+    animation: weather-float 4.5s ease-in-out infinite;
+  }
+
+  .animate-weather-glow {
+    animation: weather-glow 3.5s ease-in-out infinite;
+  }
+
+  .animate-weather-bob {
+    animation: weather-bob 2.8s ease-in-out infinite;
+  }
+
+  .animate-weather-ring-pulse {
+    animation: weather-ring-pulse 4s ease-in-out infinite;
+  }
+}
