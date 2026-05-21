@@ -30,6 +30,59 @@ AQI_LABELS = {
     5: "Very Poor",
 }
 
+def _english_geocode_name(result: dict[str, Any], fallback: str) -> str:
+    local_names = result.get("local_names") or {}
+    for key in ("en", "ascii"):
+        value = local_names.get(key)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    name = result.get("name")
+    if isinstance(name, str) and name.strip():
+        return name.strip()
+    return fallback
+
+
+def _nominatim_place_name(result: dict[str, Any]) -> str:
+    address = result.get("address") or {}
+    for key in ("city", "town", "village", "municipality", "hamlet", "suburb"):
+        value = address.get(key)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    name = result.get("name")
+    if isinstance(name, str) and name.strip():
+        return name.strip()
+    display = result.get("display_name")
+    if isinstance(display, str) and display.strip():
+        return display.split(",")[0].strip()
+    return "Unknown"
+
+
+def _nominatim_display_label(result: dict[str, Any]) -> str:
+    address = result.get("address") or {}
+    parts: list[str] = []
+    for key in (
+        "city",
+        "town",
+        "village",
+        "municipality",
+        "hamlet",
+        "suburb",
+        "state",
+        "country",
+    ):
+        value = address.get(key)
+        if isinstance(value, str) and value.strip() and value.strip() not in parts:
+            parts.append(value.strip())
+    if parts:
+        return ", ".join(parts)
+    display = result.get("display_name")
+    if isinstance(display, str) and display.strip():
+        if len(display) > 80:
+            return ", ".join(display.split(",")[:3])
+        return display.strip()
+    return _nominatim_place_name(result)
+
+
 COUNTRY_CODE_NAMES = {
     "IN": "India",
     "US": "United States",
@@ -108,7 +161,7 @@ class WeatherService:
             if reverse_results:
                 result = reverse_results[0]
                 return LocationResponse(
-                    name=result.get("name") or "Current location",
+                    name=_english_geocode_name(result, "Current location"),
                     country=result.get("country"),
                     state=result.get("state"),
                     latitude=payload.latitude,
@@ -178,7 +231,7 @@ class WeatherService:
                     continue
 
                 if self._is_country_qualified_query(trimmed):
-                    name = str(result.get("name", "")).lower()
+                    name = _nominatim_place_name(result).lower()
                     if result.get("addresstype") == "state" and name == target:
                         state_level_match = True
                         add_suggestion(self._suggestion_from_nominatim(result))
@@ -253,29 +306,26 @@ class WeatherService:
         if not country and address.get("country"):
             country = str(address.get("country"))[:2].upper()
 
-        display = str(result.get("display_name") or result.get("name") or "Unknown")
-        if len(display) > 80:
-            display = ", ".join(display.split(",")[:3])
-
         return LocationSuggestion(
-            name=str(result.get("name") or display.split(",")[0]),
+            name=_nominatim_place_name(result),
             country=country,
             state=address.get("state"),
             latitude=float(result["lat"]),
             longitude=float(result["lon"]),
-            display_label=display,
+            display_label=_nominatim_display_label(result),
         )
 
     def _suggestion_from_geocode(
         self, result: dict[str, Any], fallback_name: str
     ) -> LocationSuggestion:
+        name = _english_geocode_name(result, fallback_name)
         return LocationSuggestion(
-            name=result.get("name") or fallback_name,
+            name=name,
             country=result.get("country"),
             state=result.get("state"),
             latitude=float(result["lat"]),
             longitude=float(result["lon"]),
-            display_label=self._format_suggestion_label(result),
+            display_label=self._format_suggestion_label(result, fallback_name),
         )
 
     def _pick_best_geocode_result(
@@ -308,7 +358,7 @@ class WeatherService:
             return True
 
         target = parts[0]
-        name = str(result.get("name", "")).lower()
+        name = _english_geocode_name(result, "").lower()
         state = str(result.get("state", "")).lower()
 
         if self._is_country_qualified_query(query):
@@ -327,7 +377,7 @@ class WeatherService:
         self, result: dict[str, Any], fallback_name: str
     ) -> LocationResponse:
         return LocationResponse(
-            name=result.get("name") or fallback_name,
+            name=_english_geocode_name(result, fallback_name),
             country=result.get("country"),
             state=result.get("state"),
             latitude=float(result["lat"]),
@@ -355,11 +405,13 @@ class WeatherService:
 
         return None
 
-    def _format_suggestion_label(self, result: dict[str, Any]) -> str:
+    def _format_suggestion_label(
+        self, result: dict[str, Any], fallback_name: str = "Unknown location"
+    ) -> str:
         parts: list[str] = []
-        name = result.get("name")
+        name = _english_geocode_name(result, fallback_name)
         if name:
-            parts.append(str(name))
+            parts.append(name)
         state = result.get("state")
         if state:
             parts.append(str(state))

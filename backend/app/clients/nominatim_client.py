@@ -20,8 +20,12 @@ class NominatimClient:
             "format": "json",
             "limit": limit,
             "addressdetails": 1,
+            "accept-language": "en",
         }
-        headers = {"User-Agent": self.user_agent}
+        headers = {
+            "User-Agent": self.user_agent,
+            "Accept-Language": "en",
+        }
 
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
