@@ -94,9 +94,12 @@ Add these in the Render dashboard (not in git):
 
 ```powershell
 curl https://YOUR-BACKEND.onrender.com/api/v1/health
+curl https://YOUR-BACKEND.onrender.com/api/v1
 ```
 
-Expected: `{"status":"ok","service":"ForecastOS API"}`
+Expected health: `{"status":"ok","service":"ForecastOS API"}`
+
+Expected API index: `{"status":"ok",...,"endpoints":{...}}` — if you get `{"detail":"Not found"}`, the service is still on an old build (see troubleshooting below).
 
 4. Optional: open `https://YOUR-BACKEND.onrender.com/docs` for Swagger.
 
@@ -194,6 +197,7 @@ Run these on the **production** frontend URL.
 | # | Test | Pass criteria |
 |---|------|----------------|
 | 1 | Health | `GET .../api/v1/health` returns `ok` |
+| 1b | API index | `GET .../api/v1` returns `status: ok` and an `endpoints` map (not `Not found`) |
 | 2 | Search | Search `London, UK` — current weather and forecast load |
 | 3 | State search | Search `Goa, IN` — results load (Nominatim) |
 | 4 | Save | Save search with label → “Search saved” |
@@ -277,6 +281,7 @@ After both apps are live, add to the root `README.md` **Deployment** section:
 | 502 / timeout on first request | Render cold start; wait and retry |
 | Saved records vanished | Ephemeral SQLite on free tier; expected after redeploy |
 | Invalid API key | Re-enter `OPENWEATHER_API_KEY` on Render; key can take minutes to activate |
+| `GET /api/v1` returns `Not found` but health works | Render is serving an **old deploy**. Dashboard → **forecastos-api** → **Manual Deploy** → **Deploy latest commit**. Confirm **Settings** → **Build & Deploy**: repo `forecastos`, branch `main`, root `backend`, **Auto-Deploy** on. After live, open `.../openapi.json` and check `/api/v1` appears under `paths`. |
 
 ---
 
